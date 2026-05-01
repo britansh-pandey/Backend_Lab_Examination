@@ -1,4 +1,5 @@
-Task 2 Online Course Platform with Session and Cookies
+Task 2 -:
+Online Course Platform with Session and Cookies
 Scenario
 You are building a simple online course platform where users can log in as student or instructor. Users should stay logged in using sessions and cookies. Access to certain routes depends on user role.
 Requirements
