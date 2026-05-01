@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({
-    secret: 'mera_secret_key',
+    secret: 'super_secret_key',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }

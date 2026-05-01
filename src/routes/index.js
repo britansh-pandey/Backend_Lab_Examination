@@ -3,38 +3,38 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    let pichlaUser = req.cookies.user;
-    let abhiKaUser = req.session.current_user;
+    let previousUser = req.cookies.user;
+    let currentUser = req.session.user;
 
-    if (!abhiKaUser && pichlaUser) {
-        return res.send(`Welcome back last time you logged in as ${pichlaUser}`);
+    if (!currentUser && previousUser) {
+        return res.send(`Welcome back last time you logged in as ${previousUser}`);
     }
 
     res.send('Welcome to the online course platform');
 });
 
 router.post('/login', (req, res) => {
-    const naam = req.body.username;
-    const kaam = req.body.role;
+    const username = req.body.username;
+    const role = req.body.role;
 
-    if (!naam || !kaam) {
+    if (!username || !role) {
         return res.status(400).send('Username and role are required');
     }
 
-    req.session.current_user = {
-        naam: naam,
-        kaam: kaam
+    req.session.user = {
+        username: username,
+        role: role
     };
 
-    res.cookie('user', naam, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+    res.cookie('user', username, { maxAge: 30 * 24 * 60 * 60 * 1000 });
 
     res.send('Login successful');
 });
 
 router.get('/courses', (req, res) => {
-    let checkUser = req.session.current_user;
+    let currentUser = req.session.user;
 
-    if (!checkUser) {
+    if (!currentUser) {
         return res.status(401).send('Please log in first');
     }
 
@@ -42,13 +42,13 @@ router.get('/courses', (req, res) => {
 });
 
 router.get('/create-course', (req, res) => {
-    let checkUser = req.session.current_user;
+    let currentUser = req.session.user;
 
-    if (!checkUser) {
+    if (!currentUser) {
         return res.status(401).send('Please log in first');
     }
 
-    if (checkUser.kaam !== 'instructor') {
+    if (currentUser.role !== 'instructor') {
         return res.status(403).send('access denied');
     }
 
@@ -56,18 +56,18 @@ router.get('/create-course', (req, res) => {
 });
 
 router.get('/profile', (req, res) => {
-    let loggedInUser = req.session.current_user;
+    let currentUser = req.session.user;
 
-    if (!loggedInUser) {
+    if (!currentUser) {
         return res.status(401).send('Please log in first');
     }
 
-    res.send(`Username: ${loggedInUser.naam}, Role: ${loggedInUser.kaam}`);
+    res.send(`Username: ${currentUser.username}, Role: ${currentUser.role}`);
 });
 
 router.get('/logout', (req, res) => {
-    req.session.destroy(galti => {
-        if (galti) {
+    req.session.destroy(err => {
+        if (err) {
             return res.status(500).send('Error logging out');
         }
 
